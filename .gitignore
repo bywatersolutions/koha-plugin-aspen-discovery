@@ -6,6 +6,8 @@
 *.o
 *.pm.tdy
 *.bs
+# Node.js
+node_modules/
 
 # Devel::Cover
 cover_db/
@@ -33,3 +35,6 @@ inc/
 /MANIFEST.bak
 /pm_to_blib
 /*.zip
+
+# Project files
+.vstags
