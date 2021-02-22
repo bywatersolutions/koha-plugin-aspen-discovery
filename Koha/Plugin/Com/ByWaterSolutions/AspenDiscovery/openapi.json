@@ -1,264 +1,79 @@
 {
-  "/items/{item_id}/messages": {
-    "get": {
-      "x-mojo-to": "Com::ByWaterSolutions::AspenDiscovery::ApiController#list_item_messages",
-      "operationId": "listAspenDiscovery",
-      "tags": [
-        "items",
-        "item_messages"
-      ],
-      "parameters": [
-        {
-          "name": "item_id",
-          "in": "path",
-          "description": "Internal item identifier",
-          "required": true,
-          "type": "integer"
-        }
-      ],
-      "produces": [
-        "application/json"
-      ],
-      "responses": {
-        "200": {
-          "description": "A list of item messages"
-        }
-      },
-      "x-koha-authorization": {
-        "permissions": {
-          "catalogue": "1"
-        }
-      }
-    },
+  "/holds": {
     "post": {
-      "x-mojo-to": "Com::ByWaterSolutions::AspenDiscovery::ApiController#add_item_message",
-      "operationId": "addItemMessage",
-      "tags": [
-        "items",
-        "item_messages"
-      ],
-      "parameters": [
-        {
-          "name": "item_id",
-          "in": "path",
-          "description": "Internal item identifier",
-          "required": true,
-          "type": "integer"
-        },
-        {
+      "x-mojo-to": "Com::ByWaterSolutions::AspenDiscovery::Controllers::Holds#add",
+      "operationId": "AspenDiscoveryAddHold",
+      "tags": ["patrons", "holds"],
+      "parameters": [{
           "name": "body",
           "in": "body",
-          "description": "A JSON object containing informations about the new message",
+          "description": "A JSON object containing informations about the new hold",
           "required": true,
           "schema": {
             "type": "object",
             "properties": {
-              "type": {
-                "description": "message type",
-                "type": [
-                  "string",
-                  "null"
-                ]
+              "patron_id": {
+                "description": "Internal patron identifier",
+                "type": "integer"
               },
-              "message": {
-                "description": "the content of the message",
+              "biblio_id": {
+                "description": "Internal biblio identifier",
+                "type": [ "integer", "null" ]
+              },
+              "item_id": {
+                "description": "Internal item identifier",
+                "type": [ "integer", "null" ]
+              },
+              "pickup_library_id": {
+                "description": "Internal library identifier for the pickup library",
                 "type": "string"
+              },
+              "expiration_date": {
+                "description": "Hold end date",
+                "type": ["string", "null"],
+                "format": "date"
+              },
+              "notes": {
+                "description": "Notes related to this hold",
+                "type": [ "string", "null" ]
+              },
+              "item_type": {
+                "description": "Limit hold on one itemtype (ignored for item-level holds)",
+                "type": [ "string", "null" ]
               }
             },
-            "required": [
-              "message"
-            ]
+            "required": [ "patron_id", "pickup_library_id" ]
           }
         }
       ],
-      "produces": [
-        "application/json"
-      ],
+      "consumes": ["application/json"],
+      "produces": ["application/json"],
       "responses": {
-        "200": {
-          "description": "item message json"
-        }
-      },
-      "x-koha-authorization": {
-        "allow-owner": true,
-        "permissions": {
-          "editcatalogue": "1"
-        }
-      }
-    }
-  },
-  "/items/{item_id}/messages/{item_message_id}": {
-    "get": {
-      "x-mojo-to": "Com::ByWaterSolutions::AspenDiscovery::ApiController#get_item_message",
-      "operationId": "getItemMessage",
-      "tags": [
-        "items",
-        "item_messages"
-      ],
-      "parameters": [
-        {
-          "name": "item_id",
-          "in": "path",
-          "description": "Internal item identifier",
-          "required": true,
-          "type": "integer"
+        "201": {
+          "description": "Hold created"
         },
-        {
-          "name": "item_message_id",
-          "in": "path",
-          "description": "Internal item message identifier",
-          "required": true,
-          "type": "integer"
-        }
-      ],
-      "produces": [
-        "application/json"
-      ],
-      "responses": {
-        "200": {
-          "description": "An item messge"
-        }
-      },
-      "x-koha-authorization": {
-        "permissions": {
-          "catalogue": "1"
-        }
-      }
-    },
-    "put": {
-      "x-mojo-to": "Com::ByWaterSolutions::AspenDiscovery::ApiController#update_item_message",
-      "operationId": "updateItemMessage",
-      "tags": [
-        "items",
-        "item_messages"
-      ],
-      "parameters": [
-        {
-          "name": "item_id",
-          "in": "path",
-          "description": "Internal item identifier",
-          "required": true,
-          "type": "integer"
+        "400": {
+          "description": "Missing or wrong parameters"
         },
-        {
-          "name": "item_message_id",
-          "in": "path",
-          "description": "Internal item message identifier",
-          "required": true,
-          "type": "integer"
+        "401": {
+          "description": "Authentication required"
         },
-        {
-          "name": "body",
-          "in": "body",
-          "description": "A JSON object representing an item message",
-          "required": true,
-          "schema": {
-            "type": "object",
-            "properties": {
-              "item_message_id": {
-                "type": "integer",
-                "description": "internal item message identifier",
-                "readOnly": true
-              },
-              "itemnumber": {
-                "type": "integer",
-                "description": "internal item identifier",
-                "readOnly": true
-              },
-              "type": {
-                "type": [
-                  "string",
-                  "null"
-                ],
-                "description": "date and time the item message was created"
-              },
-              "message": {
-                "type": "string",
-                "description": "date and time the item message was created"
-              },
-              "created_on": {
-                "type": "string",
-                "description": "date and time the item message was created"
-              }
-            },
-            "additionalProperties": false,
-            "required": [
-              "message"
-            ]
-          }
-        }
-      ],
-      "produces": [
-        "application/json"
-      ],
-      "responses": {
-        "200": {
-          "description": "item message json"
-        }
-      },
-      "x-koha-authorization": {
-        "permissions": {
-          "editcatalogue": "1"
-        }
-      }
-    },
-    "delete": {
-      "x-mojo-to": "Com::ByWaterSolutions::AspenDiscovery::ApiController#delete_item_message",
-      "operationId": "deleteItemMessage",
-      "tags": [
-        "items",
-        "item_messages"
-      ],
-      "parameters": [
-        {
-          "name": "item_id",
-          "in": "path",
-          "description": "Internal item identifier",
-          "required": true,
-          "type": "integer"
+        "403": {
+          "description": "Hold not allowed"
         },
-        {
-          "name": "item_message_id",
-          "in": "path",
-          "description": "Internal item message identifier",
-          "required": true,
-          "type": "integer"
-        }
-      ],
-      "produces": [
-        "application/json"
-      ],
-      "responses": {
-        "200": {
-          "description": "Item message deleted"
+        "404": {
+          "description": "Borrower not found"
+        },
+        "500": {
+          "description": "Internal server error"
+        },
+        "503": {
+          "description": "Under maintenance"
         }
       },
       "x-koha-authorization": {
         "permissions": {
-          "editcatalogue": "1"
-        }
-      }
-    }
-  },
-  "/authorised_values": {
-    "get": {
-      "x-mojo-to": "Com::ByWaterSolutions::AspenDiscovery::ApiController#get_item_message_types",
-      "operationId": "getItemMessageTypes",
-      "tags": [
-        "items",
-        "item_messages"
-      ],
-      "produces": [
-        "application/json"
-      ],
-      "responses": {
-        "200": {
-          "description": "An item messge"
-        }
-      },
-      "x-koha-authorization": {
-        "permissions": {
-          "catalogue": "1"
+          "reserveforothers": "1"
         }
       }
     }
